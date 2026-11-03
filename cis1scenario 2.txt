@@ -1,0 +1,728 @@
+﻿Security Goals (CIA & AAA)
+* Confidentiality (AES Encryption): Keeping a diary in a private lockbox so nobody else can read your personal notes.
+* Integrity (Hashing): Using a tamper-evident sticker on a food delivery bag so you know if any fries were taken on the way.
+* Availability (Backups): Keeping a spare house key hidden in your car so you never get locked out if you lose your main set.
+* Authentication & Accountability (Logins & Audit Logs): Showing your photo ID to enter a building while a security guard writes your name in a sign-in sheet.
+* Non-Repudiation (Digital Signatures): Signing a certified mail delivery receipt so you cannot later claim you never received the package.
+1.Security Goals (CIA & AAA)
+* Confidentiality (AES Encryption): Keeping a diary in a private lockbox so nobody else can read your personal notes.
+from cryptography.fernet import Fernet
+key=Fernet.generate_key()
+cipher=Fernet(key)
+message="Top Secret"
+encrypted=cipher.encrypt(message.encode())
+decrypted=cipher.decrypt(encrypted).decode()
+print("Key:",key.decode())
+print("Encrypted:",encrypted)
+print("Decrypted:",decrypted)
+
+
+* Integrity (Hashing): Using a tamper-evident sticker on a food delivery bag so you know if any fries were taken on the way.
+import hashlib
+
+
+data="This is Important"
+hash1=hashlib.sha256(data.encode()).hexdigest()
+
+
+tampered="THIS IS IMPORTANT"
+
+
+hash2=hashlib.sha256(tampered.encode()).hexdigest()
+print("Hash1:",hash1)
+print("Hash2:",hash2)
+print("Integrity Verified?",hash1==hash2)
+
+
+* Availability (Backups): Keeping a spare house key hidden in your car so you never get locked out if you lose your main set.
+import shutil
+original_file="data.txt"
+backup_file="backup_data.txt"
+shutil.copyfile(original_file,backup_file)
+print("Backup Completed")
+
+
+4. Authentication – Username & Password Check
+users = {
+    'admin': 'password123',
+    'user1': 'hello123'
+}
+
+
+username = input("Enter username: ")
+password = input("Enter password: ")
+
+
+if users.get(username) == password:
+    print("Access Granted")
+else:
+    print("Access Denied")
+* Non-Repudiation (Digital Signatures): Signing a certified mail delivery receipt so you cannot later claim you never received the package.
+import hashlib
+
+
+message = "Approve $5000 transfer"
+signature = hashlib.sha256(message.encode()).hexdigest()
+
+
+received_message = "Approve $5000 transfer"
+received_signature = hashlib.sha256(received_message.encode()).hexdigest()
+
+
+print("Signature Verified:", signature == received_signature)
+
+
+OS Security (System Safeguards)
+* User Authentication & Permissions: Family members get keys to every room, but houseguests are given keys that only open the guest room door.
+* Firewalls & Activity Logs: A gatekeeper standing at an apartment entrance checks guest lists before letting people in and notes down visitor times.
+* Memory Management & Buffer Overflows: Assigning designated parking spots keeps cars organized; trying to park a massive semi-truck into a compact car spot spills over into adjacent spaces and causes a crash.
+1. User Authentication (with Password Hashing)
+
+
+* User Authentication & Permissions: Family members get keys to every room, but houseguests are given keys that only open the guest room door.
+import hashlib
+users={}
+
+
+def hash_pass(passw):
+    return hashlib.sha256(passw.encode()).hexdigest()
+
+
+def register(username,passw):
+    users[username]=hash_pass(passw)
+    print("Registered Succesfully!")
+
+
+def login(user,passw):
+    if users.get(user)==hash_pass(passw):
+        print("Access Granted")
+    else:
+        print("Access Denied!")
+        
+register("admin","securepass")
+login("admin","securepass")
+login("admin","securepass")
+
+
+2. Role-Based File Access (Read/Write Permissions)
+
+
+permissions={
+    "admin":["read","write"],
+    "guest":["read"]
+    }
+
+
+def access_file(user_role,action):
+    if action in permissions.get(user_role,[]):
+        print(f"{user_role} can {action} the file")
+    else:
+        print(f"{user_role} can {action} the file")
+
+
+access_file("admin","write")
+access_file("guest","write")
+
+
+2. Role-Based File Access (Read/Write Permissions)
+permissions={
+    "admin":["read","write"],
+    "guest":["read"]
+    }
+
+
+def access_file(user_role,action):
+    if action in permissions.get(user_role,[]):
+        print(f"{user_role} can {action} the file")
+    else:
+        print(f"{user_role} can {action} the file")
+
+
+access_file("admin","write")
+access_file("guest","write")
+
+
+4. File Integrity Checker (Anti-tamper)
+import hashlib
+
+
+def get_fhash(filename):
+    with open(filename,"rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+og_hash=get_fhash("example.txt")
+curr_hash=get_fhash("example.txt")
+
+
+if og_hash==curr_hash:
+    print("File is intact")
+else:
+    print("File has been changed")
+
+
+5. Basic IP Firewall Simulation
+* Firewalls & Activity Logs: A gatekeeper standing at an apartment entrance checks guest lists before letting people in and notes down visitor times.
+blocked_ips=["192.168.1.100","10.0.0.5"]
+
+
+def check_access(ip):
+    if ip in blocked_ips:
+        print(f"Access Denied for {ip}")
+    else:
+        print(f"Access Granted for {ip}")
+check_access("192.168.1.100")
+check_access("8.8.8.8")
+
+
+6. Activity Logging
+import datetime
+
+
+def log_activity(user,action):
+    with open("access_log","a") as logfile:
+        time=datetime.datetime.now().strftime("%Y-%m-%d%H:%M:%S")
+        logfile.write(f"[{time}]{user}->{action}\n")
+
+
+log_activity("admin","Accesses settings")
+log_activity("guest","tried to delete files")
+Q.2) Key Concepts of OS Memory
+
+
+1. Simulate Memory Allocation (Static & Dynamic)
+* Memory Management & Buffer Overflows: Assigning designated parking spots keeps cars organized; trying to park a massive semi-truck into a compact car spot spills over into adjacent spaces and causes a crash.
+memory = [None] * 100  
+
+
+def allocate(process_id, size):
+    for i in range(len(memory) - size + 1):
+        if all(block is None for block in memory[i:i+size]):
+            for j in range(i, i+size):
+                memory[j] = process_id
+            return f" Allocated {size} blocks to {process_id} at {i}"
+    return " No sufficient memory"
+
+
+def deallocate(process_id):
+    count = memory.count(process_id)
+    for i in range(len(memory)):
+        if memory[i] == process_id:
+            memory[i] = None
+    return f" Deallocated {count} blocks from {process_id}"
+
+
+print(allocate("P1", 10))
+print(allocate("P2", 20))
+print(deallocate("P1"))
+6. Simulated Buffer Overflow
+def safe_array_write(array,index,value):
+    if index<len(array):
+        array[index]=value
+
+
+        return "Value written"
+    else:
+        return "Buffer Overflow Attempt!"
+arr=[0]*5
+print(safe_array_write(arr,2,10))
+print(safe_array_write(arr,10,10))
+Secure Communication (Public & Private Keys)
+* Public/Private Key Encryption: Handing out open padlocks (Public Keys) to all your friends. Anyone can snap your padlock onto a box to send you a secret, but only you hold the single master key (Private Key) that opens it.
+1.Generating the key
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+
+
+sender_private=rsa.generate_private_key(public_exponent=65537,key_size=2048)
+sender_public=sender_private.public_key()
+
+
+with open("sender_private_key.pem","wb") as f:
+    f.write(
+        sender_private.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption(),
+            )
+        )
+with open("sender_public_key.pem","wb")as f:
+    f.write(
+        sender_public.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+            )
+        )
+receiver_private=rsa.generate_private_key(
+    public_exponent=65537,key_size=2048
+    )
+receiver_public=receiver_private.public_key()
+
+
+with open("receiver_private_key.pem","wb") as f:
+    f.write(
+        receiver_private.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption(),
+            )
+        )
+with open("receiver_public_key.pem","wb") as f:
+    f.write(
+        receiver_public.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+            )
+        )
+print("All RSA keys generated and saved successfully:")
+print("-sender_private_key.pem & sender_public_key.pem")
+print("-sender_private_key.pem & receiver_public_key.pem")
+
+
+2.Sender.py
+
+
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+
+
+with open("receiver_public_key.pem", "rb") as f:
+    receiver_public_key = serialization.load_pem_public_key(f.read())
+
+
+with open("sender_private_key.pem", "rb") as f:
+    sender_private_key = serialization.load_pem_private_key(
+        f.read(),
+        password=None
+    )
+
+
+user_input = input("Enter the message you want to encrypt and sign: ")
+message = user_input.encode("utf-8") 
+
+
+encrypted_message = receiver_public_key.encrypt(
+    message,
+    padding.OAEP(
+        mgf=padding.MGF1(algorithm=hashes.SHA256()),
+        algorithm=hashes.SHA256(),
+        label=None,
+    ),
+)
+
+
+signature = sender_private_key.sign(
+    message,
+    padding.PSS(
+        mgf=padding.MGF1(hashes.SHA256()),
+        salt_length=padding.PSS.MAX_LENGTH,
+    ),
+    hashes.SHA256(),
+)
+
+
+with open("encrypted_message.bin", "wb") as f:
+    f.write(encrypted_message)
+
+
+with open("signature.bin", "wb") as f:
+    f.write(signature)
+
+
+print("\nMessage encrypted and signed successfully.")
+print("Saved 'encrypted_message.bin' and 'signature.bin'.")
+3.Receiver.py
+
+
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+
+
+with open("receiver_private_key.pem", "rb") as f:
+    receiver_private_key = serialization.load_pem_private_key(
+        f.read(),
+        password=None
+    )
+
+
+with open("sender_public_key.pem", "rb") as f:
+    sender_public_key = serialization.load_pem_public_key(f.read())
+
+
+with open("encrypted_message.bin", "rb") as f:
+    encrypted_message = f.read()
+
+
+with open("signature.bin", "rb") as f:
+    signature = f.read()
+
+
+decrypted_bytes = receiver_private_key.decrypt(
+    encrypted_message,
+    padding.OAEP(
+        mgf=padding.MGF1(algorithm=hashes.SHA256()),
+        algorithm=hashes.SHA256(),
+        label=None,
+    ),
+)
+
+
+original_message = decrypted_bytes.decode("utf-8")
+print(f"\nDecrypted Message: '{original_message}'")
+
+
+print("\n--- Signature Verification Options ---")
+choice = input("Do you want to tamper with the message? (y/n): ").strip().lower()
+
+
+if choice == "y":
+    altered_text = input("Enter the new/altered message: ")
+    message_to_verify = altered_text.encode("utf-8")
+else:
+    message_to_verify = decrypted_bytes
+
+
+# 5. Verify the signature
+try:
+    sender_public_key.verify(
+        signature,
+        message_to_verify,
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH,
+        ),
+        hashes.SHA256(),
+    )
+
+
+    print("\nSignature Verified: Message is authentic and untampered!")
+
+
+except InvalidSignature:
+    print("\nSECURITY ALERT: Signature Verification Failed!")
+    print("The message was tampered with!")
+Database Security (Data Protection)
+* SQL Injection Prevention: Ordering at a drive-thru and saying "I want a burger, and erase my total bill!" Smart cashiers process your food order while ignoring administrative commands.
+1.Securing Database with Input Validation
+import sqlite3
+
+
+conn=sqlite3.connect("students.db")
+cursor=conn.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS users (username TEXT,password TEXT)")
+
+
+cursor.execute("INSERT INTO users VALUES('admin','admin_password')")
+conn.commit()
+
+
+username=input("Enter username:")
+password=input("Enter password:")
+
+
+query= f"SELECT *FROM users WHERE username='{username}' AND password='{password}'"
+cursor.execute(query)
+
+
+result=cursor.fetchone()
+print(result)
+
+
+if result:
+    print("login successfull!")
+else:
+    print("Invalid credentials!")
+Role-Based Access Control (RBAC) in Database
+
+
+import sqlite3
+conn=sqlite3.connect("rbac.db")
+cursor=conn.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS users(username TEXT,password TEXT,role TEXT)")
+cursor.execute("INSERT INTO users VALUES('admin','admin_pwd','admin')")
+cursor.execute("INSERT INTO users VALUES('john','john_pwd','student')")
+conn.commit()
+username=input("Enter username:")
+password=input("Enter password:")
+cursor.execute( "SELECT role FROM users WHERE username=? AND password=?",(username,password))
+user=cursor.fetchone()
+if user:
+    role=user[0]
+    print( f"Login Successfull ! Your role is :{role}")
+    if role=="admin":
+        print("Access granted to view,add ,delete and modify records.")
+    elif role=="student":
+        print("Access granted to view records.")
+    else:
+        print("Limited access")
+else:
+    print("Invalid credentials!")
+
+
+Network Security (Traffic Protection)
+* Replay Attack Prevention: Scanning a barcode ticket at a concert. If someone takes a photo of your ticket and tries scanning the exact same image a minute later, the system flags it as a duplicate.
+2. Implement timestamp-based replay attack detection
+(create user/database )
+
+
+import sqlite3
+import hashlib
+import secrets
+
+
+
+
+def init_db():
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, salt TEXT NOT NULL, password_hash TEXT NOT NULL)"
+    )
+    conn.commit()
+    conn.close()
+
+
+
+
+def hash_password(password, salt=None):
+    if not salt:
+        salt = secrets.token_hex(16)
+
+
+    hash_val = hashlib.pbkdf2_hmac(
+        "sha256", password.encode(), salt.encode(), 100000
+    )
+
+
+    return salt, hash_val.hex()
+
+
+
+
+def register_user(username, password):
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+
+
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+    if cursor.fetchone():
+        conn.close()
+        return "Username already exists!"
+
+
+    salt, password_hash = hash_password(password)
+
+
+    cursor.execute(
+        "INSERT INTO users (username, salt, password_hash) VALUES (?, ?, ?)",
+        (username, salt, password_hash),
+    )
+    conn.commit()
+    conn.close()
+
+
+    return "User registered successfully!"
+
+
+
+
+def authenticate_user(username, password):
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT salt, password_hash FROM users WHERE username = ?", (username,)
+    )
+    result = cursor.fetchone()
+    conn.close()
+
+
+    if not result:
+        return False
+
+
+    salt, stored_hash = result
+
+
+    _, input_hash = hash_password(password, salt)
+
+
+    return input_hash == stored_hash
+
+
+
+
+if __name__ == "__main__":
+    init_db()
+
+
+    print(register_user("alice", "secret_password"))
+    print(register_user("alice", "strong_password"))
+
+
+    print("Login success?", authenticate_user("alice", "secret_password"))
+    print("Login success?", authenticate_user("alice", "wrong_password"))
+
+
+start server 
+
+
+import socket
+from datetime import datetime, timedelta
+from cis import authenticate_user, init_db
+
+
+# Initialize database
+init_db()
+
+
+
+
+# Replay protection class
+class MessageReceiver:
+    def __init__(self):
+        self.last_timestamp = None
+        self.replay_window = timedelta(seconds=30)
+
+
+    def verify_timestamp(self, timestamp_str):
+        try:
+            msg_time = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+            now = datetime.utcnow()
+
+
+            if self.last_timestamp and msg_time <= self.last_timestamp:
+                return False, "Replay attack detected: Old timestamp."
+
+
+            if abs(now - msg_time) > self.replay_window:
+                return False, "Timestamp too old or too far in future."
+
+
+            self.last_timestamp = msg_time
+            return True, "Timestamp is valid."
+
+
+        except ValueError:
+            return False, "Invalid timestamp format."
+
+
+
+
+# Server setup
+server = socket.socket()
+server.bind(("localhost", 9999))
+server.listen(1)
+
+
+print("Server listening on port 9999...")
+
+
+conn, addr = server.accept()
+print(f"Connected by {addr}")
+
+
+# Step 1: Receive login details
+username = conn.recv(1024).decode()
+password = conn.recv(1024).decode()
+
+
+if authenticate_user(username, password):
+    conn.send(b"AUTH_OK")
+    print("Authenticated:", username)
+
+
+    # Step 2: Replay Protection
+    receiver = MessageReceiver()
+
+
+    while True:
+        data = conn.recv(1024).decode()
+
+
+        if not data:
+            break
+
+
+        try:
+            msg, timestamp_str = data.split("||")
+        except ValueError:
+            conn.send(b"ERROR: Invalid message format")
+            continue
+
+
+        valid, response = receiver.verify_timestamp(timestamp_str)
+        print(f"[{username}] {msg} @ {timestamp_str} => {response}")
+
+
+        conn.send(response.encode())
+
+
+else:
+    conn.send(b"AUTH_FAILED")
+    print("Authentication failed.")
+
+
+conn.close()
+
+
+connect and send messages 
+
+
+import socket
+from datetime import datetime
+import time
+
+
+client = socket.socket()
+client.connect(("localhost", 9999))
+
+
+# Step 1: Login
+client.send(b"alice")  # Username
+time.sleep(1)
+client.send(b"secret_password")  # Password
+
+
+auth_response = client.recv(1024)
+
+
+if auth_response != b"AUTH_OK":
+    print("Login failed.")
+    client.close()
+
+
+else:
+    print("Login successful.")
+
+
+    # Step 2: Send messages with timestamps
+    while True:
+        msg = input("Enter message (or 'exit'): ")
+
+
+        if msg == "exit":
+            break
+
+
+        timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        full_msg = f"{msg}||{timestamp}"
+
+
+        client.send(full_msg.encode())
+
+
+        server_response = client.recv(1024).decode()
+        print("Server:", server_response)
+
+
+        # Simulate replay attempt
+        time.sleep(2)
+        print("\n[Replaying same message...]")
+
+
+        client.send(full_msg.encode())
+        print("Server:", client.recv(1024).decode())
+
+
+client.close()
